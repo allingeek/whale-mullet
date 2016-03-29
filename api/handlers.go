@@ -99,6 +99,7 @@ func getInfo(c *context, w http.ResponseWriter, r *http.Request) {
 	info.Containers = int(mullet.Containers)
 	info.NCPU = int(mullet.NCPU)
 	info.MemTotal = mullet.MemTotal
+	info.ID = mullet.ID
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(info)
