@@ -90,29 +90,29 @@ func getInfo(c *context, w http.ResponseWriter, r *http.Request) {
 		info.Name = hostname
 	}
 
+	// Whale-mullet hack #1
+	client, _ := dockerclient.NewDockerClient("unix:///var/run/docker.sock", nil)
+	mullet, _ := client.Info()
+	mulletVersion, _ := client.Version()
+
+	info.ServerVersion = mulletVersion.Version
+	info.Containers = int(mullet.Containers)
+	info.NCPU = int(mullet.NCPU)
+	info.MemTotal = mullet.MemTotal
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(info)
 }
 
 // GET /version
 func getVersion(c *context, w http.ResponseWriter, r *http.Request) {
-	version := apitypes.Version{
-		Version:      "swarm/" + version.VERSION,
-		APIVersion:   APIVERSION,
-		GoVersion:    runtime.Version(),
-		GitCommit:    version.GITCOMMIT,
-		Os:           runtime.GOOS,
-		Arch:         runtime.GOARCH,
-		Experimental: experimental.ENABLED,
-		BuildTime:    version.BUILDTIME,
-	}
 
-	if kernelVersion, err := kernel.GetKernelVersion(); err == nil {
-		version.KernelVersion = kernelVersion.String()
-	}
+	// Whale-mullet hack #2
+	client, _ := dockerclient.NewDockerClient("unix:///var/run/docker.sock", nil)
+	mullet, _ := client.Version()
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(version)
+	json.NewEncoder(w).Encode(mullet)
 }
 
 // GET /images/get
